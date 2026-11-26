@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.svg" alt="mogoDB logo: an isometric wireframe cube" width="120" height="120">
+  <img src="assets/logo.svg" alt="mogoDB logo: an isometric wireframe cube filled with a dithered ribbon of light" width="220" height="220">
 </p>
 
 <h1 align="center">mogoDB</h1>
