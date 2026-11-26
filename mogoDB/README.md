@@ -1,4 +1,8 @@
-# mogodb
+<p align="center">
+  <img src="../assets/logo.svg" alt="mogoDB logo" width="96" height="96">
+</p>
+
+# mogoDB
 
 A lightweight MongoDB-compatible server in pure Rust (`mogod`). Official drivers, `mongosh`,
 and ODMs connect to it unmodified: it speaks the MongoDB wire protocol (OP_MSG, OP_COMPRESSED,

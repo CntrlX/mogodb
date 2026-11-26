@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title>mogoDB</title>
+  <!-- Isometric wireframe cube: edges only. Hidden edges are dashed. -->
+  <g stroke="#14B8A6" stroke-width="5">
+    <!-- visible edges: top face + three front edges + outer silhouette -->
+    <path d="M100 30 L160.6 65 L100 100 L39.4 65 Z"/>
+    <path d="M39.4 65 L39.4 135 L100 170 L160.6 135 L160.6 65"/>
+    <path d="M100 100 L100 170"/>
+  </g>
+  <g stroke="#14B8A6" stroke-width="3.5" stroke-dasharray="2 9" opacity="0.7">
+    <!-- hidden edges (back-bottom corner meets back-top, bottom-left and bottom-right) -->
+    <path d="M100 30 L100 100"/>
+    <path d="M100 100 L39.4 135"/>
+    <path d="M100 100 L160.6 135"/>
+  </g>
+</svg>
