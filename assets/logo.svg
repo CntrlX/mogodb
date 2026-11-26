@@ -1,16 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <title>mogoDB</title>
+  <defs>
+    <linearGradient id="edge" gradientUnits="userSpaceOnUse" x1="47" y1="38" x2="153" y2="159">
+      <stop offset="0" stop-color="#F84FCC"/>
+      <stop offset="0.5" stop-color="#9362F4"/>
+      <stop offset="1" stop-color="#00DBE4"/>
+    </linearGradient>
+  </defs>
+  <!-- Black tile with a hairline border, as on omp.sh -->
+  <rect x="4" y="4" width="192" height="192" rx="28" fill="#000" stroke="#2A2A2E" stroke-width="2"/>
   <!-- Isometric wireframe cube: edges only. Hidden edges are dashed. -->
-  <g stroke="#14B8A6" stroke-width="5">
-    <!-- visible edges: top face + three front edges + outer silhouette -->
-    <path d="M100 30 L160.6 65 L100 100 L39.4 65 Z"/>
-    <path d="M39.4 65 L39.4 135 L100 170 L160.6 135 L160.6 65"/>
-    <path d="M100 100 L100 170"/>
+  <g stroke="url(#edge)" stroke-width="5.5">
+    <path d="M100 38 L152.3 68.2 L100 98.4 L47.7 68.2 Z"/>
+    <path d="M47.7 68.2 L47.7 128.6 L100 158.8 L152.3 128.6 L152.3 68.2"/>
+    <path d="M100 98.4 L100 158.8"/>
   </g>
-  <g stroke="#14B8A6" stroke-width="3.5" stroke-dasharray="2 9" opacity="0.7">
-    <!-- hidden edges (back-bottom corner meets back-top, bottom-left and bottom-right) -->
-    <path d="M100 30 L100 100"/>
-    <path d="M100 100 L39.4 135"/>
-    <path d="M100 100 L160.6 135"/>
+  <g stroke="url(#edge)" stroke-width="3.5" stroke-dasharray="2 8" opacity="0.65">
+    <path d="M100 38 L100 98.4"/>
+    <path d="M100 98.4 L47.7 128.6"/>
+    <path d="M100 98.4 L152.3 128.6"/>
   </g>
 </svg>
