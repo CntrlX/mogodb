@@ -1,0 +1,32 @@
+[workspace]
+resolver = "2"
+members = ["mogoDB", "mogo-client", "compass"]
+default-members = ["mogoDB", "mogo-client", "compass"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[workspace.dependencies]
+mogodb = { path = "mogoDB" }
+mogo-client = { path = "mogo-client" }
+bson = "2"
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+anyhow = "1"
+thiserror = "2"
+async-trait = "0.1"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+strip = true
+
+# winit 0.30.13's build script stops advertising x11/wayland when its `rwh_06` feature is
+# enabled by another crate in the graph, which makes eframe panic at startup on Linux.
+# Force the platform features on (semver-compatible patch, same source).
+[patch.crates-io]
+winit = { path = "vendor/winit" }

@@ -1,0 +1,42 @@
+[package]
+name = "mogodb"
+version = "0.1.0"
+edition = "2024"
+description = "Lightweight MongoDB-compatible server in pure Rust (wire protocol, MQL, aggregation, indexes, transactions, change streams)"
+license = "MIT OR Apache-2.0"
+
+[[bin]]
+name = "mogod"
+path = "src/main.rs"
+
+[dependencies]
+base64 = "0.23.1"
+boa_engine = { version = "0.22", optional = true }
+bson = "2"
+fjall = "3"
+flate2 = "1.1.11"
+hmac = "0.12"
+lz4_flex = "0.14.0"
+md-5 = "0.10"
+pbkdf2 = "0.12"
+rand = "0.8"
+regex = "1.13.1"
+sha1 = "0.10"
+sha2 = "0.10"
+snap = "1.1.2"
+tokio = { version = "1.54.1", features = ["rt-multi-thread", "net", "io-util", "sync", "time", "macros", "signal"] }
+unicode-normalization = "0.1.26"
+zstd = { version = "0.14.3", optional = true }
+
+[features]
+default = ["zstd", "js"]
+zstd = ["dep:zstd"]
+# Server-side JavaScript ($where, $function, $accumulator, mapReduce) via the pure-Rust Boa engine.
+js = ["dep:boa_engine"]
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+strip = true
+panic = "unwind"

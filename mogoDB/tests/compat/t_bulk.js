@@ -1,0 +1,30 @@
+// bulkWrite (MongoDB 8.0+) parity: per-op results, counters, ordered/unordered errors, validation.
+const d = fresh('compat_bw'); fresh('compat_bw2');
+const r = (l, c) => { try { const x = db.adminCommand(c); for (const k of ['$clusterTime', 'operationTime', 'electionId', 'opTime']) delete x[k]; if (x.cursor) x.cursor.id = Number(x.cursor.id) === 0 ? 0 : 'nonzero'; for (const e of (x.cursor ? x.cursor.firstBatch : [])) if (e.errInfo && e.errInfo.failingDocumentId) { e.errInfo.failingDocumentId = 'oid'; delete e.errInfo.details; } // per-operator validation explanations are a known difference print(l, '=>', EJSON.stringify(x)); } catch (e) { print(l, '=> ERR', e.code, e.codeName, JSON.stringify(e.errmsg)); } };
+const ns = [{ns: 'compat_bw.a'}, {ns: 'compat_bw2.b'}];
+r('basic', {bulkWrite: 1, ops: [{insert: 0, document: {_id: 1, x: 1}}, {insert: 1, document: {_id: 1}}, {update: 0, filter: {_id: 1}, updateMods: {$inc: {x: 1}}}, {update: 0, filter: {_id: 9}, updateMods: {$set: {x: 1}}, upsert: true}, {delete: 1, filter: {_id: 1}}, {delete: 0, filter: {}, multi: true}], nsInfo: ns});
+r('ordered err', {bulkWrite: 1, ops: [{insert: 0, document: {_id: 1}}, {insert: 0, document: {_id: 1}}, {insert: 0, document: {_id: 2}}], nsInfo: ns});
+r('unordered err', {bulkWrite: 1, ops: [{insert: 0, document: {_id: 3}}, {insert: 0, document: {_id: 3}}, {insert: 0, document: {_id: 4}}], nsInfo: ns, ordered: false});
+r('errorsOnly', {bulkWrite: 1, ops: [{insert: 0, document: {_id: 5}}, {insert: 0, document: {_id: 5}}], nsInfo: ns, errorsOnly: true, ordered: false});
+r('multi update', {bulkWrite: 1, ops: [{update: 0, filter: {}, updateMods: {$set: {m: 1}}, multi: true}], nsInfo: ns});
+r('replacement', {bulkWrite: 1, ops: [{update: 0, filter: {_id: 2}, updateMods: {z: 1}}], nsInfo: ns});
+r('pipeline upd', {bulkWrite: 1, ops: [{update: 0, filter: {_id: 2}, updateMods: [{$set: {p: 1}}]}], nsInfo: ns});
+r('arrayFilters', {bulkWrite: 1, ops: [{insert: 0, document: {_id: 20, a: [1, 5]}}, {update: 0, filter: {_id: 20}, updateMods: {$set: {'a.$[e]': 0}}, arrayFilters: [{e: {$gt: 2}}]}], nsInfo: ns});
+r('let', {bulkWrite: 1, ops: [{update: 0, filter: {$expr: {$eq: ['$_id', '$$t']}}, updateMods: [{$set: {l: '$$t'}}]}], nsInfo: ns, let: {t: 2}});
+r('constants', {bulkWrite: 1, ops: [{update: 0, filter: {_id: 2}, updateMods: [{$set: {c: '$$k'}}], constants: {k: 7}}], nsInfo: ns});
+r('bad nsidx', {bulkWrite: 1, ops: [{insert: 5, document: {}}], nsInfo: ns});
+r('empty ops', {bulkWrite: 1, ops: [], nsInfo: ns});
+r('empty nsInfo', {bulkWrite: 1, ops: [{insert: 0, document: {}}], nsInfo: []});
+try { const x = d.runCommand({bulkWrite: 1, ops: [{insert: 0, document: {}}], nsInfo: ns}); print('not admin =>', x.ok, x.code, x.errmsg); } catch (e) { print('not admin => ERR', e.code, e.errmsg); }
+r('unknown op', {bulkWrite: 1, ops: [{foo: 0}], nsInfo: ns});
+r('two ops in one', {bulkWrite: 1, ops: [{insert: 0, delete: 0, document: {}}], nsInfo: ns});
+r('missing doc', {bulkWrite: 1, ops: [{insert: 0}], nsInfo: ns});
+r('delete multi sort', {bulkWrite: 1, ops: [{update: 0, filter: {}, updateMods: {$set: {q: 1}}, sort: {_id: -1}}], nsInfo: ns});
+r('update multi sort', {bulkWrite: 1, ops: [{update: 0, filter: {}, updateMods: {$set: {q: 1}}, sort: {_id: -1}, multi: true}], nsInfo: ns});
+r('validation err', (d.createCollection('v', {validator: {x: {$type: 'int'}}}), {bulkWrite: 1, ops: [{insert: 0, document: {x: 'a'}}], nsInfo: [{ns: 'compat_bw.v'}]}));
+r('upsert replacement', {bulkWrite: 1, ops: [{update: 0, filter: {_id: 77}, updateMods: {k: 1}, upsert: true}], nsInfo: ns});
+r('return', {bulkWrite: 1, ops: [{update: 0, filter: {_id: 2}, updateMods: {$set: {r: 1}}, return: 'post'}], nsInfo: ns});
+r('view ns', (d.createView('vw', 'a', []), {bulkWrite: 1, ops: [{insert: 0, document: {}}], nsInfo: [{ns: 'compat_bw.vw'}]}));
+r('cursor batch', {bulkWrite: 1, ops: [{insert: 0, document: {_id: 100}}, {insert: 0, document: {_id: 101}}, {insert: 0, document: {_id: 102}}], nsInfo: ns, cursor: {batchSize: 1}});
+print('final a', EJSON.stringify(d.a.find().sort({_id: 1}).toArray()));
+print('final b', EJSON.stringify(db.getSiblingDB('compat_bw2').b.find().toArray()));

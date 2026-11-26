@@ -1,0 +1,25 @@
+//! mogodb: lightweight MongoDB-compatible server in pure Rust.
+pub mod error;
+pub mod bsonutil;
+pub mod collation;
+pub mod deps;
+pub mod keys;
+pub mod query;
+pub mod update;
+pub mod agg;
+pub mod geo;
+pub mod text;
+pub mod tz;
+pub mod auth;
+pub mod wire;
+pub mod storage;
+pub mod planner;
+pub mod cursor;
+pub mod session;
+pub mod changestream;
+pub mod server;
+pub mod cmd;
+pub mod js;
+pub mod search;
+pub mod ttl;
+pub mod timeseries;
